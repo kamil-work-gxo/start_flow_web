@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Power Automate Launcher</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<style>
+:root{
+    --primary:#6750A4;
+    --primary-hover:#5B4697;
+    --surface:#ffffff;
+    --text:#1d1b20;
+    --muted:#6f6c75;
+    --success:#2e7d32;
+    --error:#d32f2f;
+}
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    min-height:100vh;
+
+    font-family:
+        Inter,
+        system-ui,
+        sans-serif;
+
+    display:grid;
+    place-items:center;
+
+    background:
+        radial-gradient(
+            circle at top left,
+            #d8d4ff,
+            transparent 45%
+        ),
+        linear-gradient(
+            135deg,
+            #f6f4ff,
+            #eef3ff
+        );
+}
+
+.card{
+    width:min(420px,90vw);
+
+    background:var(--surface);
+
+    border-radius:28px;
+
+    padding:40px;
+
+    box-shadow:
+        0 20px 60px rgba(0,0,0,.12);
+
+    text-align:center;
+
+    animation:show .35s ease;
+}
+
+@keyframes show{
+from{
+opacity:0;
+transform:
+translateY(10px)
+scale(.98);
+}
+to{
+opacity:1;
+transform:none;
+}
+}
+
+.logo{
+    width:82px;
+    height:82px;
+
+    margin:auto;
+
+    border-radius:24px;
+
+    background:
+        linear-gradient(
+            145deg,
+            var(--primary),
+            #8b73d8
+        );
+
+    display:grid;
+    place-items:center;
+
+    color:white;
+
+    font-size:36px;
+
+    box-shadow:
+        0 10px 24px rgba(103,80,164,.35);
+}
+
+h1{
+    margin:22px 0 8px;
+    color:var(--text);
+}
+
+p{
+    color:var(--muted);
+    line-height:1.6;
+}
+
+button{
+    width:100%;
+
+    margin-top:26px;
+
+    border:none;
+
+    border-radius:999px;
+
+    padding:18px;
+
+    font-size:16px;
+
+    font-weight:600;
+
+    color:white;
+
+    background:var(--primary);
+
+    cursor:pointer;
+
+    transition:
+        .2s transform,
+        .2s background,
+        .2s box-shadow;
+
+    box-shadow:
+        0 6px 16px rgba(103,80,164,.35);
+}
+
+button:hover{
+    background:var(--primary-hover);
+}
+
+button:active{
+    transform:scale(.98);
+}
+
+button:disabled{
+    opacity:.75;
+    cursor:wait;
+}
+
+.status{
+    margin-top:18px;
+    min-height:26px;
+
+    font-size:14px;
+}
+
+.success{
+    color:var(--success);
+}
+
+.error{
+    color:var(--error);
+}
+
+.loader{
+    width:18px;
+    height:18px;
+
+    border:3px solid rgba(255,255,255,.35);
+
+    border-top:white;
+
+    border-radius:50%;
+
+    display:inline-block;
+
+    animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+to{
+transform:rotate(360deg);
+}
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+<div class="logo">
+⚡
+</div>
+
+<h1>Power Automate</h1>
+
+<p>
+Uruchom przygotowany przepływ jednym kliknięciem.
+</p>
+
+<button id="runBtn" onclick="uruchomFlow()">
+Uruchom Flow
+</button>
+
+<div id="status" class="status"></div>
+
+</div>
+
+<script>
+
+async function uruchomFlow(){
+
+const btn =
+document.getElementById("runBtn");
+
+const status =
+document.getElementById("status");
+
+btn.disabled = true;
+
+btn.innerHTML =
+'<span class="loader"></span>';
+
+status.className =
+"status";
+
+status.textContent =
+"Uruchamianie...";
+
+try{
+
+const response =
+await fetch(
+"https://default36f81a88348644ddb547beb3b6a149.94.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/4f2af943cbaa40db8d47aa942a68ceaa/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=LurG90VD7KjPli86oXm12MISRCZ6AppnvURd0O7Dbo0",
+{
+method:"POST",
+
+headers:{
+"Content-Type":
+"application/json"
+},
+
+body:
+JSON.stringify({
+source:"website",
+timestamp:
+new Date()
+})
+}
+);
+
+if(response.ok){
+
+status.classList.add(
+"success"
+);
+
+status.textContent =
+"✅ Flow zostało uruchomione";
+
+}
+else{
+
+throw new Error();
+
+}
+
+}catch{
+
+status.classList.add(
+"error"
+);
+
+status.textContent =
+"❌ Nie udało się uruchomić flow";
+
+}
+
+btn.disabled = false;
+
+btn.innerHTML =
+"Uruchom Flow";
+
+}
+
+</script>
+
+</body>
+</html>
