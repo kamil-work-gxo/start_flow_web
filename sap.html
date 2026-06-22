@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<title>SAP Config</title>
+<style>
+body{
+font-family:system-ui;
+max-width:500px;
+margin:60px auto;
+}
+
+input{
+width:100%;
+padding:12px;
+margin-bottom:12px;
+}
+
+button{
+padding:12px 20px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Dane SAP</h2>
+
+<input id="login" placeholder="Login SAP">
+
+<input
+id="password"
+type="password"
+placeholder="Hasło SAP">
+
+<button onclick="zapisz()">
+Zapisz
+</button>
+
+<div id="msg"></div>
+
+<script>
+
+async function zapisz(){
+
+await fetch(
+"/api/save",
+{
+method:"POST",
+
+headers:{
+"Content-Type":
+"application/json"
+},
+
+body:JSON.stringify({
+
+login:
+document.getElementById("login").value,
+
+password:
+document.getElementById("password").value
+
+})
+
+}
+);
+
+document.getElementById("msg")
+.innerText =
+"Zapisano";
+
+}
+
+</script>
+
+</body>
+</html>
